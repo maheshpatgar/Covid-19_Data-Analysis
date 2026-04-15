@@ -1,0 +1,42 @@
+create database covidsql;
+use covidsql;
+
+SELECT * FROM corona LIMIT 20;
+-- 1) top 10 countries by cases
+select country,totalcases from corona
+order by totalcases desc
+limit 10;
+
+-- 2) continent with highest deaths
+select continent,sum(totaldeaths) as total_deaths from corona
+group by continent
+order by total_deaths desc
+limit 5;
+
+-- 3) country with highest recovery rate
+select country,sum(recoveryrate) as recover_rate from corona
+group by country
+order by recover_rate desc
+limit 5;
+
+-- 4) testing vs cases
+SELECT country,totalcases,totaltests,
+ROUND((totalcases * 100.0 / totaltests), 2) AS positivity_indicator
+FROM corona
+WHERE totaltests > 0
+ORDER BY positivity_indicator DESC;
+
+
+
+-- 5) risk category analysis
+select country,totalcases,totaldeaths,
+round((totalcases*100.0/totaldeaths),2) as risk,
+case
+    when(totalcases*100.0/totaldeaths)>5 then 'high risk'
+    when (totalcases*100.0/totaldeaths) between 2 and 5 then 'medium risk'
+    else 'low risk'
+end
+from corona
+where totalcases>0
+limit 6
+    
